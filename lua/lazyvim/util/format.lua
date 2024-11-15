@@ -9,11 +9,16 @@ local M = setmetatable({}, {
 ---@class LazyFormatter
 ---@field name string
 ---@field primary? boolean
----@field format fun(bufnr:number)
+---@field format fun(bufnr:number, range?:{start:integer[],end:integer[]})
 ---@field sources fun(bufnr:number):string[]
 ---@field priority number
 
 M.formatters = {} ---@type LazyFormatter[]
+
+--- Exclude lua from range formatting as stylua does not handle it well
+--- It will fallback to file formatting
+---@type string[]
+M.format_range_exclude_ft = { "lua" }
 
 ---@param formatter LazyFormatter
 function M.register(formatter)
@@ -52,13 +57,19 @@ function M.info(buf)
   buf = buf or vim.api.nvim_get_current_buf()
   local gaf = vim.g.autoformat == nil or vim.g.autoformat
   local baf = vim.b[buf].autoformat
+  local gmode = (vim.g.formatmode == nil and "file") or vim.g.formatmode
+  local bmode = vim.b[buf].formatmode
+  if vim.tbl_contains(vim.g.format_range_exclude_ft or M.format_range_exclude_ft, vim.bo[buf].filetype) then
+    bmode = "forced file"
+  end
   local enabled = M.enabled(buf)
   local lines = {
-    "# Status",
-    ("- [%s] global **%s**"):format(gaf and "x" or " ", gaf and "enabled" or "disabled"),
-    ("- [%s] buffer **%s**"):format(
+    "\n# Status",
+    ("- [%s] global **%s** (`%s`)"):format(gaf and "x" or " ", gaf and "enabled" or "disabled", gmode),
+    ("- [%s] buffer **%s** (`%s`)"):format(
       enabled and "x" or " ",
-      baf == nil and "inherit" or baf and "enabled" or "disabled"
+      baf == nil and "inherit" or baf and "enabled" or "disabled",
+      bmode == nil and "inherit" or bmode
     ),
   }
   local have = false
@@ -115,20 +126,26 @@ function M.enable(enable, buf)
   M.info()
 end
 
----@param opts? {force?:boolean, buf?:number}
+---@param opts? {force?:boolean, buf?:number, changes?:boolean}
 function M.format(opts)
   opts = opts or {}
   local buf = opts.buf or vim.api.nvim_get_current_buf()
   if not ((opts and opts.force) or M.enabled(buf)) then
     return
   end
+  local range_exclude_ft = vim.g.format_range_exclude_ft or M.format_range_exclude_ft
 
+  local format = M._format_file
+  local mode = (opts.changes and "changes") or M.mode(buf)
+  if mode == "changes" and not vim.tbl_contains(range_exclude_ft, vim.bo[buf].filetype) then
+    format = M._format_changes
+  end
   local done = false
   for _, formatter in ipairs(M.resolve(buf)) do
     if formatter.active then
       done = true
       LazyVim.try(function()
-        return formatter.format(buf)
+        return format(formatter, buf)
       end, { msg = "Formatter `" .. formatter.name .. "` failed" })
     end
   end
@@ -136,6 +153,46 @@ function M.format(opts)
   if not done and opts and opts.force then
     LazyVim.warn("No formatter available", { title = "LazyVim" })
   end
+end
+
+---@param formatter LazyFormatter
+---@param buf number
+function M._format_changes(formatter, buf)
+  if not LazyVim.has("gitsigns.nvim") then
+    return
+  end
+  local hunks = require("gitsigns").get_hunks(buf)
+  if hunks == nil then
+    return
+  end
+  for i = #hunks, 1, -1 do
+    local hunk = hunks[i]
+    if hunk ~= nil and hunk.type ~= "delete" then
+      local start = hunk.added.start
+      local last = start + hunk.added.count
+      local last_hunk_line = vim.api.nvim_buf_get_lines(0, last - 2, last - 1, true)[1]
+      local range = { start = { start, 0 }, ["end"] = { last - 1, last_hunk_line:len() } }
+      formatter.format(buf, range)
+    end
+  end
+end
+
+---@param formatter LazyFormatter
+---@param buf number
+function M._format_file(formatter, buf)
+  return formatter.format(buf)
+end
+
+---@param mode "changes" | "file"
+---@param buf? boolean
+function M.setmode(mode, buf)
+  if buf then
+    vim.b.formatmode = mode
+  else
+    vim.g.formatmode = mode
+    vim.b.formatmode = nil
+  end
+  M.info()
 end
 
 function M.health()
@@ -153,6 +210,29 @@ function M.health()
       "In case you no longer want to use `none-ls.nvim`, just remove the spec from your config.",
     })
   end
+end
+
+---@param buf? boolean
+function M.togglemode(buf)
+  local mode = M.mode()
+  if mode == "file" then
+    mode = "changes"
+  else
+    mode = "file"
+  end
+  M.setmode(mode, buf)
+end
+
+---@param buf? number
+---@return "changes" | "file"
+function M.mode(buf)
+  buf = buf or vim.api.nvim_get_current_buf()
+  local gmode = (vim.g.formatmode == nil and "file") or vim.g.formatmode
+  local bmode = vim.b[buf].formatmode
+  if bmode == nil then
+    return gmode
+  end
+  return bmode
 end
 
 function M.setup()
@@ -175,6 +255,27 @@ function M.setup()
   vim.api.nvim_create_user_command("LazyFormatInfo", function()
     M.info()
   end, { desc = "Show info about the formatters for the current buffer" })
+end
+
+---@param buf? boolean
+function M.snacks_mode_toggle(buf)
+  return Snacks.toggle({
+    name = "Format Changes only (" .. (buf and "Buffer" or "Global") .. ")",
+    get = function()
+      if not buf then
+        local mode = vim.g.formatmode == nil and "file" or vim.g.formatmode
+        return mode == "changes"
+      end
+      return LazyVim.format.mode() == "changes"
+    end,
+    set = function(state)
+      if state then
+        LazyVim.format.setmode("changes", buf)
+      else
+        LazyVim.format.setmode("file", buf)
+      end
+    end,
+  })
 end
 
 ---@param buf? boolean
