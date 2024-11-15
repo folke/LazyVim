@@ -4,6 +4,13 @@ vim.g.maplocalleader = "\\"
 
 -- LazyVim auto format
 vim.g.autoformat = true
+-- LazyVim auto format mode (files | changes)
+-- if set to changes only format actual changes based on git hunks
+-- otherwise format all the file
+vim.g.formatmode = "file"
+--- LazyVim auto format changes only mode will be ignored
+--- for these filetypes and fallback to file
+vim.g.format_range_exclude_ft = { "lua" }
 
 -- Snacks animations
 -- Set to `false` to globally disable all snacks animations

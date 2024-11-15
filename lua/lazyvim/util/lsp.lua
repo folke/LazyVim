@@ -162,8 +162,9 @@ function M.formatter(opts)
     name = "LSP",
     primary = true,
     priority = 1,
-    format = function(buf)
-      M.format(LazyVim.merge({}, filter, { bufnr = buf }))
+    format = function(buf, range)
+      local fopts = LazyVim.merge({}, filter, { bufnr = buf }, { range = range })
+      M.format(fopts)
     end,
     sources = function(buf)
       local clients = M.get_clients(LazyVim.merge({}, filter, { bufnr = buf }))
