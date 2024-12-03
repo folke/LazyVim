@@ -48,7 +48,7 @@ return {
     end,
   },
   {
-    "hrsh7th/nvim-cmp",
+    "nvim-cmp",
     optional = true,
     dependencies = { "R-nvim/cmp-r" },
     opts = function(_, opts)

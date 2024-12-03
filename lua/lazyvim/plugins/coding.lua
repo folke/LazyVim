@@ -2,13 +2,15 @@ return {
 
   -- auto completion
   {
-    "hrsh7th/nvim-cmp",
+    "iguanacucumber/magazine.nvim",
+    name = "nvim-cmp",
     version = false, -- last release is way too old
     event = "InsertEnter",
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
+      { "iguanacucumber/mag-nvim-lsp", name = "cmp-nvim-lsp", opts = {} },
+      { "iguanacucumber/mag-buffer", name = "cmp-buffer" },
+      { "iguanacucumber/mag-cmdline", name = "cmp-cmdline" },
+      { "https://codeberg.org/FelipeLema/cmp-async-path", name = "cmp-path" },
     },
     -- Not all LSP servers add brackets when completing a function.
     -- To better deal with this, LazyVim adds a custom option to cmp,
@@ -192,7 +194,7 @@ return {
   },
   -- Add lazydev source to cmp
   {
-    "hrsh7th/nvim-cmp",
+    "nvim-cmp",
     optional = true,
     opts = function(_, opts)
       table.insert(opts.sources, { name = "lazydev", group_index = 0 })

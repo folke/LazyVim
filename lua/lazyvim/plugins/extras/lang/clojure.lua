@@ -14,7 +14,7 @@ return {
 
   -- Extend auto completion
   {
-    "hrsh7th/nvim-cmp",
+    "nvim-cmp",
     optional = true,
     dependencies = {
       "PaterJason/cmp-conjure",

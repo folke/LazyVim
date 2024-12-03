@@ -9,7 +9,7 @@ return {
         build = {
           LazyVim.is_win() and "pwsh -noni .\\install.ps1" or "./install.sh",
         },
-        dependencies = "hrsh7th/nvim-cmp",
+        dependencies = "nvim-cmp",
         opts = {
           max_lines = 1000,
           max_num_results = 3,

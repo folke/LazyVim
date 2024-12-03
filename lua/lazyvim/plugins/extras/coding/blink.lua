@@ -7,7 +7,7 @@ end
 
 return {
   {
-    "hrsh7th/nvim-cmp",
+    "nvim-cmp",
     enabled = false,
   },
   {

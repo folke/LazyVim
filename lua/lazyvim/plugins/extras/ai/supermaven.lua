@@ -29,7 +29,7 @@ return {
 
   -- cmp integration
   {
-    "hrsh7th/nvim-cmp",
+    "nvim-cmp",
     optional = true,
     dependencies = { "supermaven-nvim" },
     opts = function(_, opts)
