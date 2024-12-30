@@ -5,7 +5,7 @@ local pick_chezmoi = function()
     local fzf_lua = require("fzf-lua")
     local actions = {
       ["enter"] = function(selected)
-        fzf_lua.actions.vimcmd_entry("ChezmoiEdit", selected, {cwd = os.getenv("HOME")})
+        fzf_lua.actions.vimcmd_entry("ChezmoiEdit", selected, { cwd = os.getenv("HOME") })
       end,
     }
     require("fzf-lua").files({ cmd = "chezmoi managed --include=files,symlinks", actions = actions })
