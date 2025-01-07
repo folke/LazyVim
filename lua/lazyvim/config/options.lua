@@ -14,6 +14,12 @@ vim.g.formatmode = "file"
 --- for these filetypes and fallback to file
 vim.g.format_range_exclude_ft = { "lua" }
 
+-- LazyVim changes provider to use.
+-- Can be one of: gitsigns, mini-diff
+-- Leave it to "auto" to automatically use the provider
+-- enabled with `:LazyExtras`
+vim.g.lazyvim_changes_provider = "auto"
+
 -- Snacks animations
 -- Set to `false` to globally disable all snacks animations
 vim.g.snacks_animate = true
