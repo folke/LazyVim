@@ -158,22 +158,10 @@ end
 ---@param formatter LazyFormatter
 ---@param buf number
 function M._format_changes(formatter, buf)
-  if not LazyVim.has("gitsigns.nvim") then
-    return
-  end
-  local hunks = require("gitsigns").get_hunks(buf)
-  if hunks == nil then
-    return
-  end
-  for i = #hunks, 1, -1 do
-    local hunk = hunks[i]
-    if hunk ~= nil and hunk.type ~= "delete" then
-      local start = hunk.added.start
-      local last = start + hunk.added.count
-      local last_hunk_line = vim.api.nvim_buf_get_lines(0, last - 2, last - 1, true)[1]
-      local range = { start = { start, 0 }, ["end"] = { last - 1, last_hunk_line:len() } }
-      formatter.format(buf, range)
-    end
+  local changes = LazyVim.changes(buf)
+  for i = #changes, 1, -1 do
+    local change = changes[i]
+    formatter.format(buf, change)
   end
 end
 
