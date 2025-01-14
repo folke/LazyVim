@@ -64,7 +64,7 @@ return {
         {
           "hrsh7th/nvim-cmp",
           optional = true,
-          dependencies = { -- this will only be evaluated if nvim-cmp is enabled
+          specs = { -- this will only be evaluated if nvim-cmp and copilot-cmp are enabled
             {
               "zbirenbaum/copilot-cmp",
               opts = {},
@@ -97,7 +97,12 @@ return {
         {
           "saghen/blink.cmp",
           optional = true,
-          dependencies = { "giuxtaposition/blink-cmp-copilot" },
+          specs = {
+            {
+              "zbirenbaum/copilot-cmp",
+              dependencies = { "giuxtaposition/blink-cmp-copilot" },
+            },
+          },
           opts = {
             sources = {
               default = { "copilot" },
