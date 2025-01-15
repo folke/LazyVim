@@ -3,22 +3,12 @@ local pick_chezmoi = function()
     require("telescope").extensions.chezmoi.find_files()
   elseif LazyVim.pick.picker.name == "fzf" then
     local fzf_lua = require("fzf-lua")
-    local results = require("chezmoi.commands").list()
-    local chezmoi = require("chezmoi.commands")
-
-    local opts = {
-      fzf_opts = {},
-      fzf_colors = true,
-      actions = {
-        ["default"] = function(selected)
-          chezmoi.edit({
-            targets = { "~/" .. selected[1] },
-            args = { "--watch" },
-          })
-        end,
-      },
+    local actions = {
+      ["enter"] = function(selected)
+        fzf_lua.actions.vimcmd_entry("ChezmoiEdit", selected, { cwd = os.getenv("HOME") })
+      end,
     }
-    fzf_lua.fzf_exec(results, opts)
+    require("fzf-lua").files({ cmd = "chezmoi managed --include=files,symlinks", actions = actions })
   end
 end
 
@@ -33,6 +23,7 @@ return {
   },
   {
     "xvzc/chezmoi.nvim",
+    cmd = { "ChezmoiEdit" },
     keys = {
       {
         "<leader>sz",
@@ -86,6 +77,27 @@ return {
       end
 
       table.insert(opts.config.center, 5, projects)
+    end,
+  },
+  {
+    "folke/snacks.nvim",
+    optional = true,
+    opts = function(_, opts)
+      local chezmoi_entry = {
+        icon = " ",
+        key = "c",
+        desc = "Config",
+        action = pick_chezmoi,
+      }
+      local config_index
+      for i = #opts.dashboard.preset.keys, 1, -1 do
+        if opts.dashboard.preset.keys[i].key == "c" then
+          table.remove(opts.dashboard.preset.keys, i)
+          config_index = i
+          break
+        end
+      end
+      table.insert(opts.dashboard.preset.keys, config_index, chezmoi_entry)
     end,
   },
 
