@@ -130,6 +130,7 @@ return {
 
         -- These depend on nvim-dap, but can additionally be disabled by setting false here.
         dap = { hotcodereplace = "auto", config_overrides = {} },
+        -- Can set this to false to disable main class scan, which is a performance killer for large project
         dap_main = {},
         test = true,
         settings = {
@@ -246,7 +247,9 @@ return {
               if opts.dap and LazyVim.has("nvim-dap") and mason_registry.is_installed("java-debug-adapter") then
                 -- custom init for Java debugger
                 require("jdtls").setup_dap(opts.dap)
-                require("jdtls.dap").setup_dap_main_class_configs(opts.dap_main)
+                if opts.dap_main then
+                  require("jdtls.dap").setup_dap_main_class_configs(opts.dap_main)
+                end
 
                 -- Java Test require Java debugger to work
                 if opts.test and mason_registry.is_installed("java-test") then
