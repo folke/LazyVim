@@ -1,5 +1,12 @@
 # Changelog
 
+## [14.7.1](https://github.com/LazyVim/LazyVim/compare/v14.7.0...v14.7.1) (2025-01-15)
+
+
+### Bug Fixes
+
+* **snacks.picker:** fix mapping for `Recent (cwd)` ([#5407](https://github.com/LazyVim/LazyVim/issues/5407)) ([8307b0f](https://github.com/LazyVim/LazyVim/commit/8307b0fe506a38417f3b7835e2c4b43d9a970946))
+
 ## [14.7.0](https://github.com/LazyVim/LazyVim/compare/v14.6.1...v14.7.0) (2025-01-14)
 
 
