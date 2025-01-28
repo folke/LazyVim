@@ -4,6 +4,7 @@ return {
     event = "VeryLazy",
     dependencies = {
       "stevearc/dressing.nvim",
+      "ibhagwan/fzf-lua",
     },
     opts = {
       -- Default configuration
@@ -28,9 +29,10 @@ return {
     },
     build = LazyVim.is_win() and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" or "make",
   },
-    {
+  {
     "saghen/blink.cmp",
     lazy = true,
+    dependencies = { "saghen/blink.compat" },
     opts = {
       sources = {
         default = { "avante_commands", "avante_mentions", "avante_files" },
@@ -63,7 +65,6 @@ return {
       },
     },
   },
-
   {
     "MeanderingProgrammer/render-markdown.nvim",
     optional = true,
