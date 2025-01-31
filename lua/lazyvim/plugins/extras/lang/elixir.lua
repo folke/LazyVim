@@ -39,6 +39,14 @@ return {
     },
   },
   {
+    "synic/refactorex.nvim",
+    ft = "elixir",
+    opts = {
+      auto_update = true,
+      pin_version = nil,
+    },
+  },
+  {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
