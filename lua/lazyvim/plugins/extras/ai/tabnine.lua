@@ -16,7 +16,6 @@ return {
   {
     "hrsh7th/nvim-cmp",
     optional = true,
-    dependencies = { "tzachar/cmp-tabnine" },
     ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
       table.insert(opts.sources, 1, {
@@ -37,7 +36,7 @@ return {
   {
     "saghen/blink.cmp",
     optional = true,
-    dependencies = { "tzachar/cmp-tabnine", "saghen/blink.compat" },
+    dependencies = { "saghen/blink.compat" },
     opts = {
       sources = {
         compat = { "cmp_tabnine" },
