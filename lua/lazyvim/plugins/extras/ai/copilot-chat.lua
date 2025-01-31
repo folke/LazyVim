@@ -9,8 +9,41 @@ function M.pick(kind)
       LazyVim.warn("No " .. kind .. " found on the current line")
       return
     end
-    local ok = pcall(require, "fzf-lua")
-    require("CopilotChat.integrations." .. (ok and "fzflua" or "telescope")).pick(items)
+
+    -- Get the picker wanted (configured) by the user
+    local picker = LazyVim.pick.want()
+
+    -- Map LazyVim picker names to CopilotChat integration modules
+    -- and get the corresponding CopilotChat integration module
+    local integration = ({
+      telescope = "telescope",
+      fzf = "fzflua",
+      snacks = "snacks",
+    })[picker]
+
+    if not integration then
+      LazyVim.warn(
+        ("No integration available for picker '%s'. Ensure a supported picker is installed and configured."):format(
+          picker
+        )
+      )
+      return
+    end
+
+    -- Check if the integration module is available
+    local ok, picker_module = pcall(require, "CopilotChat.integrations." .. integration)
+    if not ok then
+      LazyVim.warn(
+        ("Integration module '%s' for picker '%s' is not available. Ensure it is installed and enabled."):format(
+          integration,
+          picker
+        )
+      )
+      return
+    end
+
+    -- Use the selected picker module
+    picker_module.pick(items)
   end
 end
 
