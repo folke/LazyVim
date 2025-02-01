@@ -37,7 +37,6 @@ return {
                 rangeVariableTypes = true,
               },
               analyses = {
-                fieldalignment = true,
                 nilness = true,
                 unusedparams = true,
                 unusedwrite = true,
