@@ -79,6 +79,101 @@ pick = function()
     }
 
     fzf_lua.fzf_exec(results, opts)
+  elseif LazyVim.pick.picker.name == "snacks" then
+    local project = require("project_nvim.project")
+    local history = require("project_nvim.utils.history")
+    local results = history.get_recent_projects()
+    ---@type snacks.picker.Config
+    Snacks.picker({
+      layout = {
+        layout = {
+          box = "horizontal",
+          width = 0.8,
+          height = 0.8,
+          {
+            box = "vertical",
+            border = "rounded",
+            title = "Project picker",
+            { win = "input", height = 1, border = "bottom" },
+            { win = "list", border = "none" },
+          },
+        },
+      },
+      win = {
+        input = {
+          keys = {
+            ["<c-s>"] = { "live_grep", mode = { "i", "n" } },
+            ["<c-r>"] = { "oldfiles", mode = { "i", "n" } },
+            ["<c-t>"] = { "tabedit", mode = { "i", "n" } },
+            ["<c-w>"] = { "change_dir", mode = { "i", "n" } },
+            ["<c-d>"] = { "delete_project", mode = { "i", "n" } },
+          },
+        },
+      },
+      finder = function()
+        local items = {}
+        for _, item in ipairs(results) do
+          items[#items + 1] = {
+            file = item,
+            text = item,
+          }
+        end
+        return items
+      end,
+      format = function(item, _)
+        local file = item.file
+        local ret = {}
+        local a = Snacks.picker.util.align
+        local icon, icon_hl = Snacks.util.icon(file.ft, "directory")
+        ret[#ret + 1] = { a(icon, 3), icon_hl }
+        ret[#ret + 1] = { " " }
+        ret[#ret + 1] = { a(file, 20) }
+
+        return ret
+      end,
+      actions = {
+        confirm = function(_, item)
+          ---@diagnostic disable-next-line: missing-fields
+          Snacks.picker.pick("files", {
+            cwd = item.file,
+          })
+        end,
+        tabedit = function(_, item)
+          vim.cmd("tabedit")
+          ---@diagnostic disable-next-line: missing-fields
+          Snacks.picker.pick("files", {
+            cwd = item.file,
+          })
+        end,
+        live_grep = function(_, item)
+          Snacks.picker.pick("grep", {
+            cwd = item.file,
+          })
+        end,
+        oldfiles = function(_, item)
+          ---@diagnostic disable-next-line: missing-fields
+          Snacks.picker.pick("recent", {
+            filter = { cwd = item.file },
+          })
+        end,
+        change_dir = function(picker, item)
+          local path = item.file
+          picker:close()
+          local ok = project.set_pwd(path)
+          if ok then
+            LazyVim.info("Change project dir to " .. path)
+          end
+        end,
+        delete_project = function(_, item)
+          local path = item.file
+          local choice = vim.fn.confirm("Delete '" .. path .. "' project? ", "&Yes\n&No")
+          if choice == 1 then
+            history.delete_project({ value = path })
+          end
+          pick()
+        end,
+      },
+    })
   end
 end
 
@@ -180,5 +275,8 @@ return {
         key = "p",
       })
     end,
+    keys = {
+      { "<leader>fp", pick, desc = "Projects" },
+    },
   },
 }
