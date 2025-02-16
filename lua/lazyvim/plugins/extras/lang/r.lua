@@ -48,6 +48,20 @@ return {
     end,
   },
   {
+    "saghen/blink.cmp",
+    optional = true,
+    dependencies = {
+      "R-nvim/cmp-r",
+    },
+    opts = {
+      sources = {
+        compat = {
+          cmp_r = { name = "cmp_r", module = "blink.compat.source" },
+        },
+      },
+    },
+  },
+  {
     "hrsh7th/nvim-cmp",
     optional = true,
     dependencies = { "R-nvim/cmp-r" },
