@@ -37,7 +37,6 @@ return {
   {
     "hrsh7th/nvim-cmp",
     optional = true,
-    dependencies = { "codeium.nvim" },
     opts = function(_, opts)
       table.insert(opts.sources, 1, {
         name = "codeium",
@@ -59,7 +58,7 @@ return {
   vim.g.ai_cmp and {
     "saghen/blink.cmp",
     optional = true,
-    dependencies = { "codeium.nvim", "saghen/blink.compat" },
+    dependencies = { "saghen/blink.compat" },
     opts = {
       sources = {
         compat = { "codeium" },
