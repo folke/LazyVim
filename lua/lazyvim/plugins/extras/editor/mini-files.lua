@@ -107,5 +107,42 @@ return {
         Snacks.rename.on_rename_file(event.data.from, event.data.to)
       end,
     })
+
+    --- Allow to open the file in a picked window if nvim-window-picker is installed.
+    if pcall(require, "window-picker") then
+      --- Opens the file in a picked window.
+      --- @param close boolean Whether to close the mini.files window after opening the file.
+      local open_in_window = function(close)
+        close = close or false
+        local mini_files = require("mini.files")
+        local picked_window_id = require("window-picker").pick_window({
+          filter_rules = {
+            autoselect_one = true,
+            bo = {
+              filetype = { "notify", "minifiles" },
+              buftype = { "terminal", "quickfix", "nofile" },
+            },
+          },
+        })
+        if picked_window_id then
+          mini_files.set_target_window(picked_window_id)
+          mini_files.go_in({ close_on_file = close })
+        else
+          vim.notify("Window selection canceled", vim.log.levels.INFO, { title = "mini.files" })
+        end
+      end
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniFilesBufferCreate",
+        callback = function(args)
+          local buf_id = args.data.buf_id
+
+          vim.keymap.set("n", "<M-l>", open_in_window, { buffer = buf_id, desc = "Open in picked window" })
+          vim.keymap.set("n", "<M-L>", function()
+            open_in_window(true)
+          end, { buffer = buf_id, desc = "Open in picked window and close" })
+        end,
+      })
+    end
   end,
 }
