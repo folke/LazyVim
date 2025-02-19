@@ -139,6 +139,8 @@ map("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" })
 -- toggle options
 LazyVim.format.snacks_toggle():map("<leader>uf")
 LazyVim.format.snacks_toggle(true):map("<leader>uF")
+LazyVim.format.snacks_mode_toggle():map("<leader>um")
+LazyVim.format.snacks_mode_toggle(true):map("<leader>uM")
 Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
 Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
 Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>uL")
