@@ -101,9 +101,20 @@ function M.pretty_path(opts)
     local root = LazyVim.root.get({ normalize = true })
     local cwd = LazyVim.root.cwd()
 
-    if opts.relative == "cwd" and path:find(cwd, 1, true) == 1 then
+    -- original path is preserved to provide user with expected result of pretty_path, not a normalized one,
+    -- which might be confusing
+    local norm_path = path
+
+    if LazyVim.is_win() then
+      -- in case any of the provided paths involved mixed case, an additional normalization step for windows
+      norm_path = norm_path:lower()
+      root = root:lower()
+      cwd = cwd:lower()
+    end
+
+    if opts.relative == "cwd" and norm_path:find(cwd, 1, true) == 1 then
       path = path:sub(#cwd + 2)
-    elseif path:find(root, 1, true) == 1 then
+    elseif norm_path:find(root, 1, true) == 1 then
       path = path:sub(#root + 2)
     end
 
