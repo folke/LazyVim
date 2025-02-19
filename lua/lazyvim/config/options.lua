@@ -42,6 +42,9 @@ vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
 -- for detecting the LSP root
 vim.g.root_lsp_ignore = { "copilot" }
 
+-- Filetypes to ignore LSP keymaps
+vim.g.keymaps_lsp_ignore_ft = {}
+
 -- Hide deprecation warnings
 vim.g.deprecation_warnings = false
 

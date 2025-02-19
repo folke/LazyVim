@@ -6,6 +6,13 @@ M._keys = nil
 ---@alias LazyKeysLspSpec LazyKeysSpec|{has?:string|string[], cond?:fun():boolean}
 ---@alias LazyKeysLsp LazyKeys|{has?:string|string[], cond?:fun():boolean}
 
+---@param buffer integer
+---@return boolean
+function M.is_ignored(buffer)
+  local ft = vim.bo[buffer].filetype
+  return vim.tbl_contains(vim.g.keymaps_lsp_ignore_ft or {}, ft)
+end
+
 ---@return LazyKeysLspSpec[]
 function M.get()
   if M._keys then
@@ -64,7 +71,7 @@ end
 ---@return LazyKeysLsp[]
 function M.resolve(buffer)
   local Keys = require("lazy.core.handler.keys")
-  if not Keys.resolve then
+  if M.is_ignored(buffer) or not Keys.resolve then
     return {}
   end
   local spec = vim.tbl_extend("force", {}, M.get())
