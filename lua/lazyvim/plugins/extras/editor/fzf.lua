@@ -221,12 +221,30 @@ return {
       { "<leader>fc", LazyVim.pick.config_files(), desc = "Find Config File" },
       { "<leader>ff", LazyVim.pick("files"), desc = "Find Files (Root Dir)" },
       { "<leader>fF", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
-      { "<leader>fg", "<cmd>FzfLua git_files<cr>", desc = "Find Files (git-files)" },
+      {
+        "<leader>fg",
+        function()
+          require("fzf-lua.providers.git").files({ cwd = LazyVim.root.git() })
+        end,
+        desc = "Find Files (git-files)",
+      },
       { "<leader>fr", "<cmd>FzfLua oldfiles<cr>", desc = "Recent" },
       { "<leader>fR", LazyVim.pick("oldfiles", { cwd = vim.uv.cwd() }), desc = "Recent (cwd)" },
       -- git
-      { "<leader>gc", "<cmd>FzfLua git_commits<CR>", desc = "Commits" },
-      { "<leader>gs", "<cmd>FzfLua git_status<CR>", desc = "Status" },
+      {
+        "<leader>gc",
+        function()
+          require("fzf-lua.providers.git").commits({ cwd = LazyVim.root.git() })
+        end,
+        desc = "Commits",
+      },
+      {
+        "<leader>gs",
+        function()
+          require("fzf-lua.providers.git").status({ cwd = LazyVim.root.git() })
+        end,
+        desc = "Status",
+      },
       -- search
       { '<leader>s"', "<cmd>FzfLua registers<cr>", desc = "Registers" },
       { "<leader>sa", "<cmd>FzfLua autocmds<cr>", desc = "Auto Commands" },
