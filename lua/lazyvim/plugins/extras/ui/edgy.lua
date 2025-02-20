@@ -1,5 +1,5 @@
 return {
-  -- edgy
+  -- Create and display predefined window layouts.
   {
     "folke/edgy.nvim",
     event = "VeryLazy",

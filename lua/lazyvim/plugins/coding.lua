@@ -1,5 +1,7 @@
 return {
-  -- auto pairs
+  -- Auto pairs
+  -- Automatically inserts a matching closing character
+  -- when you type an opening character like `"`, `[`, or `(`.
   {
     "echasnovski/mini.pairs",
     event = "VeryLazy",
@@ -20,14 +22,18 @@ return {
     end,
   },
 
-  -- comments
+  -- Improves comment syntax, lets Neovim handle multiple
+  -- types of comments for a single language, and relaxes rules
+  -- for uncommenting.
   {
     "folke/ts-comments.nvim",
     event = "VeryLazy",
     opts = {},
   },
 
-  -- Better text-objects
+  -- Extends the a & i text objects, this adds the ability to select
+  -- arguments, function calls, text within quotes and brackets, and to
+  -- repeat those selections to select an outer text object.
   {
     "echasnovski/mini.ai",
     event = "VeryLazy",
@@ -64,6 +70,8 @@ return {
     end,
   },
 
+  -- Configures LuaLS to support auto-completion and type checking
+  -- while editing your Neovim configuration.
   {
     "folke/lazydev.nvim",
     ft = "lua",

@@ -1,4 +1,6 @@
 return {
+  -- Asynchronously calls language-specific linter tools and reports
+  -- their results via the `vim.diagnostic` module.
   {
     "mfussenegger/nvim-lint",
     event = "LazyFile",
