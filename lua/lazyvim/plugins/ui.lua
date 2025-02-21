@@ -83,6 +83,12 @@ return {
 
       vim.o.laststatus = vim.g.lualine_laststatus
 
+      -- HACK: see lualine.nvim issue #1201, Illegal character from fzf could
+      -- cause lualine to hang. To prevent this, we disable lualine from
+      -- retrieving the content of the currently selected item in fzf, avoiding
+      -- potential invalid characters.
+      require("lualine.extensions.fzf").sections.lualine_y = {}
+
       local opts = {
         options = {
           theme = "auto",
