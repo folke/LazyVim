@@ -88,6 +88,10 @@ return {
       keymap = {
         preset = "enter",
         ["<C-y>"] = { "select_and_accept" },
+        ["<S-Tab>"] = {
+          LazyVim.cmp.map({ "snippet_backward", "ai_accept_word" }),
+          "fallback",
+        },
       },
     },
     ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
