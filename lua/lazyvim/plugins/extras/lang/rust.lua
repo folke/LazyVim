@@ -93,9 +93,10 @@ return {
               },
             },
             files = {
-              excludeDirs = {
+              exclude = {
                 ".direnv",
                 ".git",
+                ".jj",
                 ".github",
                 ".gitlab",
                 "bin",
