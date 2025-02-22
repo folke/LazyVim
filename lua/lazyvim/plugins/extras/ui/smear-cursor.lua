@@ -1,3 +1,4 @@
+-- Animates cursor movement with a smear effect.
 return {
   "sphamba/smear-cursor.nvim",
   event = "VeryLazy",
