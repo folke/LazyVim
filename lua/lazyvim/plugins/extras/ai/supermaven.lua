@@ -37,7 +37,6 @@ return {
   {
     "hrsh7th/nvim-cmp",
     optional = true,
-    dependencies = { "supermaven-nvim" },
     opts = function(_, opts)
       if vim.g.ai_cmp then
         table.insert(opts.sources, 1, {
@@ -52,7 +51,7 @@ return {
   vim.g.ai_cmp and {
     "saghen/blink.cmp",
     optional = true,
-    dependencies = { "supermaven-nvim", "saghen/blink.compat" },
+    dependencies = { "saghen/blink.compat" },
     opts = {
       sources = {
         compat = { "supermaven" },
