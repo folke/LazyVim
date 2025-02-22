@@ -40,8 +40,8 @@ return {
           name = "conform.nvim",
           priority = 100,
           primary = true,
-          format = function(buf)
-            require("conform").format({ bufnr = buf })
+          format = function(buf, range)
+            require("conform").format({ bufnr = buf, range = range })
           end,
           sources = function(buf)
             local ret = require("conform").list_formatters(buf)

@@ -1,3 +1,24 @@
+---@type LazyChangeProvider
+local gitsigns_provider = {
+  name = "gitsigns",
+  changes = function(buf)
+    buf = buf or vim.api.get_current_buf(buf)
+    local hunks = require("gitsigns").get_hunks(buf)
+    if hunks == nil then
+      return nil
+    end
+    hunks = vim.tbl_filter(function(h)
+      return h and h.type ~= "delete"
+    end, hunks)
+    return vim.tbl_map(function(h)
+      local start = h.added.start
+      local last = start + h.added.count
+      local last_hunk_line = vim.api.nvim_buf_get_lines(0, last - 2, last - 1, true)[1]
+      return { start = { start, 0 }, ["end"] = { last - 1, last_hunk_line:len() } }
+    end, hunks)
+  end,
+}
+
 return {
 
   -- search/replace in multiple files
@@ -123,6 +144,9 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     event = "LazyFile",
+    init = function()
+      LazyVim.changes.register(gitsigns_provider)
+    end,
     opts = {
       signs = {
         add = { text = "▎" },
@@ -139,6 +163,7 @@ return {
         topdelete = { text = "" },
         changedelete = { text = "▎" },
       },
+      attach_to_untracked = true,
       on_attach = function(buffer)
         local gs = package.loaded.gitsigns
 
