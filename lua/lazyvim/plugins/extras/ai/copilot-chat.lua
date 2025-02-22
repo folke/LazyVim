@@ -84,6 +84,9 @@ return {
         end,
       })
 
+      -- Add copilot-chat to the list of filetypes that should ignore LSP keymaps
+      vim.g.keymaps_lsp_ignore_ft = vim.list_extend(vim.g.keymaps_lsp_ignore_ft or {}, { "copilot-chat" })
+
       chat.setup(opts)
     end,
   },
